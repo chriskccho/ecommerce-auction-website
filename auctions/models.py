@@ -1,13 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
-
 class User(AbstractUser):
     pass
 
 class Category(models.Model):
     category_types = models.CharField(max_length=30)
+
+    def __str__(self):
+        return f"{self.category_types}"
 
 class Listing(models.Model):
     #user that posted the listing
@@ -16,11 +17,13 @@ class Listing(models.Model):
     description = models.CharField(max_length=255, blank=True)
     startingbid = models.FloatField()
     currentbid = models.FloatField(blank=True, null=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="this_category_listings")
-    imageurl = models.URLField(blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="this_category_listings", blank=True, null=True)
+    image = models.ImageField(null=True, blank=True)
     isitactive = models.BooleanField(default=True)
     watchlist = models.ManyToManyField(User, blank=True, related_name="this_user_fav_listing")
 
+    def __str__(self):
+        return f"{self.title}: {self.description}"
 
 class Bid(models.Model):
     #user that bid on this listing
@@ -28,8 +31,13 @@ class Bid(models.Model):
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="this_listing_bids")
     bidamount = models.FloatField()
 
+    def __str__(self):
+        return f"{self.bidamount}"
+
 class Comment(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="this_user_comments")
     listing_id = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="this_listing_comments")
     comment = models.CharField(max_length=255)
+
+
 

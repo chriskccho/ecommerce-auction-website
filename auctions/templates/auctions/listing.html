@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{{listing}}
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'addtowatch' listing.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" name="watchlist">{{value}} watchlist</button>
+    </form>
+    <form action = "{% url 'bid' listing.id %}" method="POST">
+        {% csrf_token %}
+        {{form}}
+        <input type="submit">
+    </form>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div id="message">{{ message }}</div> 
+    {% endfor %}
+    {% endif %}   
+    
+    {% endif %}
+
+{% endblock %}
