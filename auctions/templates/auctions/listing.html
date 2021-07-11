@@ -6,20 +6,34 @@
     {% if user.is_authenticated %}
     <form action="{% url 'addtowatch' listing.id %}" method="POST">
         {% csrf_token %}
-        <button type="submit" name="watchlist">{{value}} watchlist</button>
+        <button type="submit" name="watchlist">{{value}} Watchlist</button>
     </form>
     <form action = "{% url 'bid' listing.id %}" method="POST">
         {% csrf_token %}
-        {{form}}
+        {{bidform}}
         <input type="submit">
     </form>
-
+ 
     {% if messages %}
     {% for message in messages %}
     <div id="message">{{ message }}</div> 
     {% endfor %}
     {% endif %}   
-    
+
+    <form action = "{% url 'comment' listing.id %}" method="POST">
+        {% csrf_token %}
+        {{commentform}}
+        <input type="submit">
+    </form>  
+    {% endif %}
+
+    {% if allcomments %}
+    <ul>
+        {% for comment in allcomments %}
+        {{comment}}
+        <br>
+        {% endfor %}
+    </ul>
     {% endif %}
 
 {% endblock %}

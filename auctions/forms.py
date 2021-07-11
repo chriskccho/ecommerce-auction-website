@@ -17,4 +17,7 @@ class BidForm(ModelForm):
         }
         fields = ['bidamount']
 
-        
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment']

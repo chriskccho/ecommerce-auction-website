@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .forms import ListingForm, BidForm
+from .forms import ListingForm, BidForm, CommentForm
 from .models import User, Listing, Category, Bid, Comment
 from django.contrib import messages
 
@@ -87,40 +87,47 @@ def addtowatch(request, listing_id):
 
     if request.method == 'POST':
         if listing not in request.user.this_user_fav_listing.all():
-            request.user.this_user_fav_listing.add(listing)
-            
+            request.user.this_user_fav_listing.add(listing)    
         else:
             request.user.this_user_fav_listing.remove(listing)
 
     return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}))
 
-
 def listing(request, listing_id):
     
     listing = Listing.objects.get(pk=listing_id)
-    form = BidForm()
+    bidform = BidForm()
+    commentform = CommentForm()
 
-    if listing in request.user.this_user_fav_listing.all():
-        value = 'Remove from'
+    #getting all comments for this listing
+    allcomments = listing.this_listing_comments.all()
+
+    #watchlist button rendering
+    if request.user.is_authenticated:
+        if listing in request.user.this_user_fav_listing.all():
+            value = 'Remove from'
+        else:
+            value = 'Add to' 
+        context = {"listing":listing, "bidform":bidform, "value": value, "commentform":commentform, "allcomments":allcomments}
     else:
-        value = 'Add to'   
+        context = {"listing":listing, "bidform":bidform, "commentform":commentform, "allcomments":allcomments}
+    #end watchlist
 
-    return render(request, "auctions/listing.html", {
-        "listing":listing,
-        "form": form,
-        "value": value
-    })
+    return render(request, "auctions/listing.html", context)
+    
 
 def bid(request, listing_id):
+
     listing = Listing.objects.get(pk = listing_id)
+
     if listing.currentbid == None:
         bid = listing.startingbid
-        print(bid)
     else:
         bid = listing.currentbid
     if request.method == "POST":
 
         form = BidForm(request.POST)
+
         if form.is_valid():
             if form.cleaned_data['bidamount'] <= bid:
                 messages.error(request, 'This amount is lower or equal to the current bid. Please add a higher amount to bid on this listing.')
@@ -134,3 +141,20 @@ def bid(request, listing_id):
                 messages.success(request, 'Bid successfully placed, your bid is now the highest current bid.')
 
     return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}))
+
+
+def comment(request, listing_id):
+
+    listing = Listing.objects.get(pk = listing_id)
+    
+    if request.method == "POST":
+
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user_id = request.user
+            comment.listing_id = listing
+            comment.save()
+
+    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id": listing_id}))
