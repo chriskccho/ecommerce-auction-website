@@ -15,16 +15,26 @@ class Listing(models.Model):
     #user that posted the listing
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="this_user_listings")
     title = models.CharField(max_length=64)
-    description = models.CharField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
     startingbid = models.FloatField()
     currentbid = models.FloatField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="this_category_listings", blank=True, null=True)
     image = models.ImageField(null=True, blank=True)
     isitactive = models.BooleanField(default=True)
     watchlist = models.ManyToManyField(User, blank=True, related_name="this_user_fav_listing")
-
+    dateposted = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return f"{self.title}: {self.description}"
+
+    def get_current_price(self):
+        if self.currentbid is None:
+            return "{:.2f}".format(self.startingbid)
+        else:
+            return "{:.2f}".format(self.currentbid)
+
+    def get_year(self):
+        return self.dateposted.strftime("%b. %d, %Y, %I:%M %p")
 
 class Bid(models.Model):
     #user that bid on this listing

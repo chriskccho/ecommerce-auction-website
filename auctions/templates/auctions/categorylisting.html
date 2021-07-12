@@ -2,8 +2,10 @@
 
 {% block body %}
     {% if categorylisting %}
-    {% for listing in categorylisting %}
-        {{listing}}
-    {% endfor %}
+        {% for listing in categorylisting %}
+            {{listing}}
+        {% endfor %}
+    {% else %}
+    <h3>No listings</h3>
     {% endif %}
 {% endblock %}

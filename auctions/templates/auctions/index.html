@@ -3,15 +3,24 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    <ul>
-        {% if activelistings %}
+    {% if activelistings %}
         {% for activelisting in activelistings %}
-            <li>{{activelisting.title}}</li>
-            {{activelisting.description}}
-
+        <a class="link" href="{% url 'listing' activelisting.id %}">
+            <div class="listing">
+                <div class="image-container">
+                    <img class="listing-image" src="{{activelisting.image.url}}">
+                </div>
+                <div class="listing-info">
+                    <h4>{{activelisting.title}}</h4>
+                    <p>{{activelisting.description}}</p>
+                    <p>Current Bid: ${{activelisting.get_current_price}}</p>
+                    <p>Date Posted: {{activelisting.get_year}}</p>
+                    <p>Listed by: {{activelisting.user_id.username}}</p>
+                </div>
+            </div>
+        </a>
         {% endfor %}
-        {% else %}
-            <li>No Active Listings</li>
-        {% endif %}
-    </ul>
+    {% else %}
+        <h3>No Active Listings</h3>
+    {% endif %}
 {% endblock %}

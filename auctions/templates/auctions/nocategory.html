@@ -5,5 +5,7 @@
         {% for listing in nocategory %}
             {{listing}}
         {% endfor %}
+    {% else %}
+    <h3>No listings</h3>
     {% endif %}
 {% endblock %}
