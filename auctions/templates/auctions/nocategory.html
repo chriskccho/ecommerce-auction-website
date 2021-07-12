@@ -1,0 +1,9 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if nocategory %}
+        {% for listing in nocategory %}
+            {{listing}}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {%if allcategories %}
+    <ul>
+        {% for category in allcategories %}
+            <!--Pass category id here too-->
+            <li><a href="{% url 'categorylisting' category.id %}">{{category}}</a></li>
+        {% endfor %}
+            <li><a href="{% url 'nocategory' %}">No Category</a></li>
+    </ul>
+    {% endif %}
+{% endblock %}

@@ -183,3 +183,28 @@ def close(request, listing_id):
         listing.save()
     
     return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}))
+
+def categories(request):
+
+    allcategories = Category.objects.all()
+
+    return render(request, "auctions/categories.html", {
+        "allcategories":allcategories
+    })
+
+def categorylisting(request, category_id):
+    
+    category = Category.objects.get(pk = category_id)
+    categorylisting = category.this_category_listings.all()
+
+    return render(request, "auctions/categorylisting.html", {
+        "categorylisting":categorylisting
+    })
+
+def nocategory(request):
+
+    nocategory = Listing.objects.filter(category_id__isnull = True)
+
+    return render(request, "auctions/nocategory.html", {
+        "nocategory": nocategory
+    })
