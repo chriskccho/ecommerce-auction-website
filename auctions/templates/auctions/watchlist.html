@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if favlistings %}
+<ul>
+    {% for listing in favlistings %}
+    <li>{{listing}}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<ul>
+    <li>No watched listings.</li>
+</ul>
+{% endif %}
+{% endblock %}

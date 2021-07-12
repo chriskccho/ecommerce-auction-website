@@ -1,32 +1,56 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-{{listing}}
+    {{listing}}
 
-    {% if user.is_authenticated %}
-    <form action="{% url 'addtowatch' listing.id %}" method="POST">
-        {% csrf_token %}
-        <button type="submit" name="watchlist">{{value}} Watchlist</button>
-    </form>
-    <form action = "{% url 'bid' listing.id %}" method="POST">
-        {% csrf_token %}
-        {{bidform}}
-        <input type="submit">
-    </form>
- 
-    {% if messages %}
-    {% for message in messages %}
-    <div id="message">{{ message }}</div> 
-    {% endfor %}
-    {% endif %}   
+        {% if user.is_authenticated %}
+            <!--Watchlist-->
+            <form action="{% url 'addtowatch' listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" name="watchlist">{{value}} Watchlist</button>
+            </form>
+            
+            <!--if the signed in user does not own this listing and is active-->
+            {% if listing.user_id != user and listing.isitactive == True %}
+            <form action = "{% url 'bid' listing.id %}" method="POST">
+                {% csrf_token %}
+                {{bidform}}
+                <input type="submit">
+            </form>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'bid' in message.tags %}
+                            <div id="message">{{ message }}</div> 
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}  
+            <!--if the signed in user does own this listing and is active-->
+            {% elif listing.user_id == user and listing.isitactive == True %}
+                <form action = "{% url 'close' listing.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="close">Close listing</button>
+                </form>
+            <!--if the signed in user does not own this listing and is inactive-->
+            {% elif listing.user_id != user and listing.isitactive == False %}
+                {{flag}}
+            <!--if the signed in user does own this listing and is inactive-->
+            {% elif listing.user_id == user and listing.isitactive == False %}
+            
+                <p>You closed this listing.</p>
+            {% endif %}
+            
+  
+            <!--Comment-->
+            <form action = "{% url 'comment' listing.id %}" method="POST">
+                {% csrf_token %}
+                {{commentform}}
+                <input type="submit">
+            </form>  
 
-    <form action = "{% url 'comment' listing.id %}" method="POST">
-        {% csrf_token %}
-        {{commentform}}
-        <input type="submit">
-    </form>  
-    {% endif %}
-
+        {% endif %}
+    
+    <!--Comment list-->
+    <p>This listing is closed.</p>
     {% if allcomments %}
     <ul>
         {% for comment in allcomments %}

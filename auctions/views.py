@@ -80,6 +80,12 @@ def createlisting(request):
         "form":form
     })
 
+@login_required
+def watchlist(request):
+    favlistings = request.user.this_user_fav_listing.all()
+    return render(request, "auctions/watchlist.html", {
+        "favlistings":favlistings
+    })
 
 def addtowatch(request, listing_id):
 
@@ -99,18 +105,27 @@ def listing(request, listing_id):
     bidform = BidForm()
     commentform = CommentForm()
 
-    #getting all comments for this listing
     allcomments = listing.this_listing_comments.all()
 
-    #watchlist button rendering
     if request.user.is_authenticated:
+
+        user_bid_this_listing = request.user.this_user_bids.filter(listing_id = listing_id)
+        flag = 'You did not bid on this item'
+        for bid in user_bid_this_listing:
+            if bid.bidamount == listing.currentbid:
+                flag = "You won this auction"
+            else:
+                flag = "You did not win this auction"
+
         if listing in request.user.this_user_fav_listing.all():
             value = 'Remove from'
         else:
             value = 'Add to' 
-        context = {"listing":listing, "bidform":bidform, "value": value, "commentform":commentform, "allcomments":allcomments}
+
+        context = {"listing":listing, "bidform":bidform, "value": value, "commentform":commentform, "allcomments":allcomments, "flag":flag}
     else:
         context = {"listing":listing, "bidform":bidform, "commentform":commentform, "allcomments":allcomments}
+
     #end watchlist
 
     return render(request, "auctions/listing.html", context)
@@ -130,7 +145,7 @@ def bid(request, listing_id):
 
         if form.is_valid():
             if form.cleaned_data['bidamount'] <= bid:
-                messages.error(request, 'This amount is lower or equal to the current bid. Please add a higher amount to bid on this listing.')
+                messages.error(request, 'This amount is lower or equal to the current bid. Please add a higher amount to bid on this listing.', extra_tags='bid')
             else:
                 bidrow = form.save(commit=False)
                 bidrow.user_id = request.user
@@ -138,7 +153,7 @@ def bid(request, listing_id):
                 bidrow.save()
                 listing.currentbid = form.cleaned_data['bidamount']
                 listing.save()
-                messages.success(request, 'Bid successfully placed, your bid is now the highest current bid.')
+                messages.success(request, 'Bid successfully placed, your bid is now the highest current bid.', extra_tags='bid')
 
     return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}))
 
@@ -158,3 +173,13 @@ def comment(request, listing_id):
             comment.save()
 
     return HttpResponseRedirect(reverse('listing', kwargs={"listing_id": listing_id}))
+
+def close(request, listing_id):
+
+    listing = Listing.objects.get(pk = listing_id)
+    
+    if request.method == "POST":
+        listing.isitactive = False
+        listing.save()
+    
+    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}))
