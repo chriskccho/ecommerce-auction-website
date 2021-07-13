@@ -1,63 +1,138 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    {{listing}}
 
-        {% if user.is_authenticated %}
-            <!--Watchlist-->
-            <form action="{% url 'addtowatch' listing.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" name="watchlist">{{value}} Watchlist</button>
-            </form>
-            
-            <!--if the signed in user does not own this listing and is active-->
-            {% if listing.user_id != user and listing.isitactive == True %}
-            <form action = "{% url 'bid' listing.id %}" method="POST">
-                {% csrf_token %}
-                {{bidform}}
-                <input type="submit">
-            </form>
-                {% if messages %}
-                    {% for message in messages %}
-                        {% if 'bid' in message.tags %}
-                            <div id="message">{{ message }}</div> 
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}  
-            <!--if the signed in user does own this listing and is active-->
-            {% elif listing.user_id == user and listing.isitactive == True %}
-                <form action = "{% url 'close' listing.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" name="close">Close listing</button>
-                </form>
-            <!--if the signed in user does not own this listing and is inactive-->
-            {% elif listing.user_id != user and listing.isitactive == False %}
-                {{flag}}
-            <!--if the signed in user does own this listing and is inactive-->
-            {% elif listing.user_id == user and listing.isitactive == False %}
-            
-                <p>You closed this listing.</p>
-            {% endif %}
-            
-  
-            <!--Comment-->
-            <form action = "{% url 'comment' listing.id %}" method="POST">
-                {% csrf_token %}
-                {{commentform}}
-                <input type="submit">
-            </form>  
-
-        {% endif %}
-    
-    <!--Comment list-->
-    <p>This listing is closed.</p>
-    {% if allcomments %}
-    <ul>
-        {% for comment in allcomments %}
-        {{comment}}
-        <br>
-        {% endfor %}
-    </ul>
+<!--
+  <div class="listing">
+        <div class="image-container">
+            <img class="listing-image" src="{{listing.image.url}}">
+        </div>
+        <div class="listing-info">
+            <h4>{{listing.title}}</h4>
+            <p>{{listing.description}}</p>
+            <p>Starting Bid: ${{listing.get_starting_bid}}</p>
+            <p>Current Bid: ${{listing.get_current_price}}</p>
+            <p>Date Posted: {{listing.get_year}}</p>
+            <p>Listed by: {{listing.user_id.username}}</p>
+        </div>
+    </div>
+-->
+<div class="heading">
+    <h3>Listing: {{listing.title}}</h3>
+    {% if user.is_authenticated %}
+    <!--Watchlist-->
+    <div class="watchlist-btn">
+        <form action="{% url 'addtowatch' listing.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" name="watchlist">{{value}} Watchlist</button>
+        </form>
+    </div>
     {% endif %}
+</div>
 
+<div class="full-img">
+    <img class="listing-image" src="{{listing.image.url}}">
+</div>
+
+<div class="description">
+    <p><strong>Description:</strong> {{listing.description}}</p>
+    <p><strong>Listed by:</strong> {{listing.user_id.username}}</p>
+    <p><strong>Date posted:</strong> {{listing.get_date}}</p>
+    <p><strong>Category:</strong> {{listing.category}}</p>
+    <p><strong>Current price:</strong> {{listing.get_current_price}}</p>
+</div>
+{% if user.is_authenticated %}
+<!--if the signed in user does not own this listing and is active-->
+
+{% if listing.user_id != user and listing.isitactive == True %}
+<form action="{% url 'bid' listing.id %}" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        {{bidform}}
+    </div>
+    <input class="btn btn-primary" type="submit" value="Bid">
+</form>
+
+<br>
+{% if messages %}
+{% for message in messages %}
+{% if 'error' in message.tags %}
+<div class="alert alert-danger" id="message">{{ message }}</div>
+{% else %}
+<div class="alert alert-success" id="message">{{ message }}</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+<p><strong>Bids on this listing:</strong></p>
+<div class="bidlist">
+    <ul>
+        {% if listing.this_listing_bids.all %}
+        {% for bid in listing.this_listing_bids.all reversed %}
+        <li>${{bid.bidamount|floatformat:2}} bid by {{bid.user_id.username}}</li>
+        {% endfor %}
+        {% else %}
+        <li>No bids yet.</li>
+        {% endif %}
+    </ul>
+</div>
+
+
+<!--if the signed in user does own this listing and is active-->
+{% elif listing.user_id == user and listing.isitactive == True %}
+<form action="{% url 'close' listing.id %}" method="POST">
+    {% csrf_token %}
+    <button type="submit" name="close">Close listing</button>
+</form>
+<!--if the signed in user does not own this listing and is inactive-->
+{% elif listing.user_id != user and listing.isitactive == False %}
+{{flag}}
+<!--if the signed in user does own this listing and is inactive-->
+{% elif listing.user_id == user and listing.isitactive == False %}
+
+<p>You closed this listing.</p>
+{% endif %}
+
+
+<!--Comment-->
+<form action="{% url 'comment' listing.id %}" method="POST">
+    {% csrf_token %}
+    <div class="form-group" id="locatecomment">
+        {{commentform}}
+    </div>
+    <input type="submit" class="btn btn-primary">
+</form>
+
+{% endif %}
+
+{% if listing.isitactive == False %}
+<p>This listing is closed.</p>
+{% endif %}
+
+
+<!--Comment list-->
+<br>
+<p><strong>Comment Section:</strong></p>
+<div class="comment-section">
+{% if allcomments %}
+
+    {% for comment in allcomments %}
+    <div class='comment'>
+    <strong>{{comment.user_id.username}}</strong>
+    <br>
+    {{comment.get_date}}
+    <br>
+    {{comment.comment}}
+    <br>
+    <br>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class='comment'>
+        No comment
+    </div>
+{% endif %}
+
+</div>
 {% endblock %}

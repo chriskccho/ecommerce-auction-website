@@ -145,7 +145,7 @@ def bid(request, listing_id):
 
         if form.is_valid():
             if form.cleaned_data['bidamount'] <= bid:
-                messages.error(request, 'This amount is lower or equal to the current bid. Please add a higher amount to bid on this listing.', extra_tags='bid')
+                messages.error(request, 'Please add a higher bid than the current bid.')
             else:
                 bidrow = form.save(commit=False)
                 bidrow.user_id = request.user
@@ -153,9 +153,9 @@ def bid(request, listing_id):
                 bidrow.save()
                 listing.currentbid = form.cleaned_data['bidamount']
                 listing.save()
-                messages.success(request, 'Bid successfully placed, your bid is now the highest current bid.', extra_tags='bid')
+                messages.success(request, 'Bid successfully placed, your bid is now the highest current bid.')
 
-    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}))
+    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}) + '#message')
 
 
 def comment(request, listing_id):
@@ -172,7 +172,7 @@ def comment(request, listing_id):
             comment.listing_id = listing
             comment.save()
 
-    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id": listing_id}))
+    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id": listing_id}) + '#locatecomment')
 
 def close(request, listing_id):
 

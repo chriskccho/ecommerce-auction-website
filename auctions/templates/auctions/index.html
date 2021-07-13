@@ -13,8 +13,9 @@
                 <div class="listing-info">
                     <h4>{{activelisting.title}}</h4>
                     <p>{{activelisting.description}}</p>
-                    <p>Current Bid: ${{activelisting.get_current_price}}</p>
-                    <p>Date Posted: {{activelisting.get_year}}</p>
+                    <p>Starting Bid: ${{activelisting.get_starting_bid}}</p>
+                    <p>Current Price: {{activelisting.get_current_price}}</p>
+                    <p>Date Posted: {{activelisting.get_date}}</p>
                     <p>Listed by: {{activelisting.user_id.username}}</p>
                 </div>
             </div>

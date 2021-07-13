@@ -2,6 +2,7 @@ body {
     padding: 10px;
 }
 
+/*active listing page */
 .listing {
     height: 300px;
     width: 100%;
@@ -37,3 +38,39 @@ body {
     text-decoration: none !important;
     color: black;
 }
+
+/*end active listing page */
+/*specfic listing page */
+
+.heading {
+    display: flex;
+    flex-direction: row;
+}
+
+.watchlist-btn {
+    margin-left: 20px;
+}
+
+.full-img {
+    height: 500px;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.bidlist {
+    height: 100px;
+    background-color: #ededed;
+    width: 22%;
+    overflow: scroll;
+    padding-top: 5px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+
+.comment-section {
+    margin-top:30px;
+    padding-left:40px;
+}
+

@@ -27,13 +27,16 @@ class Listing(models.Model):
     def __str__(self):
         return f"{self.title}: {self.description}"
 
+    def get_starting_bid(self):
+        return "{:.2f}".format(self.startingbid)
+
     def get_current_price(self):
         if self.currentbid is None:
-            return "{:.2f}".format(self.startingbid)
+            return "$" + "{:.2f}".format(self.startingbid)
         else:
-            return "{:.2f}".format(self.currentbid)
+            return "$" + "{:.2f}".format(self.currentbid)
 
-    def get_year(self):
+    def get_date(self):
         return self.dateposted.strftime("%b. %d, %Y, %I:%M %p")
 
 class Bid(models.Model):
@@ -53,6 +56,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user_id.username}: {self.comment} @ {self.time}"
+
+    def get_date(self):
+        return self.time.strftime("%b. %d, %Y, %I:%M %p")
+
 
 
 
