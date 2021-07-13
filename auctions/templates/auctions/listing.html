@@ -24,6 +24,7 @@
     <p><strong>Listed by:</strong> {{listing.user_id.username}}</p>
     <p><strong>Date posted:</strong> {{listing.get_date}}</p>
     <p><strong>Category:</strong> {{listing.category}}</p>
+    <p><strong>Starting bid:</strong> {{listing.startingbid}}</p>
     <p><strong>Current price:</strong> {{listing.get_current_price}}</p>
 </div>
 {% if user.is_authenticated %}
@@ -32,13 +33,13 @@
 {% if listing.user_id != user and listing.isitactive == True %}
 <form action="{% url 'bid' listing.id %}" method="POST">
     {% csrf_token %}
-    <div class="form-group">
+    <div class="form-group" id="bidform">
         {{bidform}}
     </div>
     <input class="btn btn-primary" type="submit" value="Bid">
 </form>
 
-<br>
+
 {% if messages %}
 {% for message in messages %}
 {% if 'error' in message.tags %}
@@ -55,7 +56,7 @@
     {% csrf_token %}
     <button class="btn btn-primary" type="submit" name="close">Close listing</button>
 </form>
-<br>
+
 
 <!--if the signed in user does not own this listing and is inactive-->
 {% elif listing.user_id != user and listing.isitactive == False %}
@@ -65,8 +66,9 @@
 
 <p>You closed this listing.</p>
 {% endif %}
+{% endif %}
 
-<p><strong>Bids on this listing:</strong></p>
+<p class="titleofsection"><strong>Bids on this listing:</strong></p>
 <div class="bidlist">
     <ul>
         {% if listing.this_listing_bids.all %}
@@ -80,7 +82,7 @@
 </div>
 
 <!--Comment-->
-
+{% if user.is_authenticated %}
 <form action="{% url 'comment' listing.id %}" method="POST">
     {% csrf_token %}
     <div class="form-group" id="locatecomment">
@@ -95,10 +97,12 @@
 <p>This listing is closed.</p>
 {% endif %}
 
-
+{% if user.is_authenticated == False %}
+<a href="{% url 'login' %}">Please log in to bid/comment on this listing.</a>
+{% endif %}
 <!--Comment list-->
-<br>
-<p><strong>Comment Section:</strong></p>
+
+<p class="titleofsection"><strong>Comment Section:</strong></p>
 <div class="comment-section">
 {% if allcomments %}
 

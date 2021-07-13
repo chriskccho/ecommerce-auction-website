@@ -155,7 +155,7 @@ def bid(request, listing_id):
                 listing.save()
                 messages.success(request, 'Bid successfully placed, your bid is now the highest current bid.')
 
-    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}) + '#message')
+    return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}) + '#bidform')
 
 
 def comment(request, listing_id):
