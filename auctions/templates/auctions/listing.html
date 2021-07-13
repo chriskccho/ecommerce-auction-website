@@ -2,21 +2,6 @@
 
 {% block body %}
 
-<!--
-  <div class="listing">
-        <div class="image-container">
-            <img class="listing-image" src="{{listing.image.url}}">
-        </div>
-        <div class="listing-info">
-            <h4>{{listing.title}}</h4>
-            <p>{{listing.description}}</p>
-            <p>Starting Bid: ${{listing.get_starting_bid}}</p>
-            <p>Current Bid: ${{listing.get_current_price}}</p>
-            <p>Date Posted: {{listing.get_year}}</p>
-            <p>Listed by: {{listing.user_id.username}}</p>
-        </div>
-    </div>
--->
 <div class="heading">
     <h3>Listing: {{listing.title}}</h3>
     {% if user.is_authenticated %}
@@ -64,6 +49,23 @@
 {% endfor %}
 {% endif %}
 
+<!--if the signed in user does own this listing and is active-->
+{% elif listing.user_id == user and listing.isitactive == True %}
+<form action="{% url 'close' listing.id %}" method="POST">
+    {% csrf_token %}
+    <button class="btn btn-primary" type="submit" name="close">Close listing</button>
+</form>
+<br>
+
+<!--if the signed in user does not own this listing and is inactive-->
+{% elif listing.user_id != user and listing.isitactive == False %}
+{{flag}}
+<!--if the signed in user does own this listing and is inactive-->
+{% elif listing.user_id == user and listing.isitactive == False %}
+
+<p>You closed this listing.</p>
+{% endif %}
+
 <p><strong>Bids on this listing:</strong></p>
 <div class="bidlist">
     <ul>
@@ -77,24 +79,8 @@
     </ul>
 </div>
 
-
-<!--if the signed in user does own this listing and is active-->
-{% elif listing.user_id == user and listing.isitactive == True %}
-<form action="{% url 'close' listing.id %}" method="POST">
-    {% csrf_token %}
-    <button type="submit" name="close">Close listing</button>
-</form>
-<!--if the signed in user does not own this listing and is inactive-->
-{% elif listing.user_id != user and listing.isitactive == False %}
-{{flag}}
-<!--if the signed in user does own this listing and is inactive-->
-{% elif listing.user_id == user and listing.isitactive == False %}
-
-<p>You closed this listing.</p>
-{% endif %}
-
-
 <!--Comment-->
+
 <form action="{% url 'comment' listing.id %}" method="POST">
     {% csrf_token %}
     <div class="form-group" id="locatecomment">
@@ -130,7 +116,7 @@
 
     {% else %}
     <div class='comment'>
-        No comment
+        No comments
     </div>
 {% endif %}
 
