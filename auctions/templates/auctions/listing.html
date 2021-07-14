@@ -24,7 +24,7 @@
     <p><strong>Listed by:</strong> {{listing.user_id.username}}</p>
     <p><strong>Date posted:</strong> {{listing.get_date}}</p>
     <p><strong>Category:</strong> {{listing.category}}</p>
-    <p><strong>Starting bid:</strong> {{listing.startingbid}}</p>
+    <p><strong>Starting bid:</strong> ${{listing.get_starting_bid}}</p>
     <p><strong>Current price:</strong> {{listing.get_current_price}}</p>
 </div>
 {% if user.is_authenticated %}
