@@ -60,11 +60,11 @@
 
 <!--if the signed in user does not own this listing and is inactive-->
 {% elif listing.user_id != user and listing.isitactive == False %}
-{{flag}}
+<div class="alert alert-primary">{{flag}}</div>
 <!--if the signed in user does own this listing and is inactive-->
 {% elif listing.user_id == user and listing.isitactive == False %}
 
-<p>You closed this listing.</p>
+<div class="alert alert-primary">You closed this listing.</div>
 {% endif %}
 {% endif %}
 
@@ -93,9 +93,12 @@
 
 {% endif %}
 
+<!--
 {% if listing.isitactive == False %}
 <p>This listing is closed.</p>
 {% endif %}
+-->
+
 
 {% if user.is_authenticated == False %}
 <a href="{% url 'login' %}">Please log in to bid/comment on this listing.</a>

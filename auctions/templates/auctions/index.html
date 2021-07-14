@@ -1,27 +1,34 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    
+    {% block heading %}
     <h2>Active Listings</h2>
+    {% endblock %}
 
-    {% if activelistings %}
-        {% for activelisting in activelistings %}
-        <a class="link" href="{% url 'listing' activelisting.id %}">
+    {% if listings %}
+    {% block content %}
+        {% for listing in listings %}
+        <a class="link" href="{% url 'listing' listing.id %}">
             <div class="listing">
                 <div class="image-container">
-                    <img class="listing-image" src="{{activelisting.image.url}}">
+                    <img class="listing-image" src="{{listing.image.url}}">
                 </div>
                 <div class="listing-info">
-                    <h4>{{activelisting.title}}</h4>
-                    <p>{{activelisting.description}}</p>
-                    <p>Starting Bid: ${{activelisting.get_starting_bid}}</p>
-                    <p>Current Price: {{activelisting.get_current_price}}</p>
-                    <p>Date Posted: {{activelisting.get_date}}</p>
-                    <p>Listed by: {{activelisting.user_id.username}}</p>
+
+                    <h4>{{listing.title}}</h4>
+                    <p>{{listing.description}}</p>
+                    <p>Starting Bid: ${{listing.get_starting_bid}}</p>
+                    <p>Current Price: {{listing.get_current_price}}</p>
+                    <p>Date Posted: {{listing.get_date}}</p>
+                    <p>Listed by: {{listing.user_id.username}}</p>
+                
                 </div>
             </div>
         </a>
         {% endfor %}
+    {% endblock %}
     {% else %}
-        <h3>No Active Listings</h3>
+        <ul><li><h5>No Listings</h5></li></ul>
     {% endif %}
 {% endblock %}

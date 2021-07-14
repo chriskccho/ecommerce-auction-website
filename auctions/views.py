@@ -11,7 +11,7 @@ from django.contrib import messages
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "activelistings":Listing.objects.filter(isitactive= True)
+        "listings":Listing.objects.filter(isitactive= True)
     })
 
 
@@ -82,11 +82,61 @@ def createlisting(request):
 
 @login_required
 def watchlist(request):
-    favlistings = request.user.this_user_fav_listing.all()
+    listings = request.user.this_user_fav_listing.all()
+    lst = list()
+    for listing in listings:
+        if listing.isitactive == False:
+            lst.append(["Listing closed", "danger"])
+        else:
+            lst.append(["Listing live", "success"])
     return render(request, "auctions/watchlist.html", {
-        "favlistings":favlistings
+        "listings":list(zip(listings, lst))
     })
 
+
+@login_required
+def mylisting(request):
+    listings = request.user.this_user_listings.all()
+    lst = list()
+    for listing in listings:
+        if listing.isitactive == False:
+            lst.append(["Listing closed", "danger"])
+        else:
+            lst.append(["Listing live", "success"])
+    return render(request, "auctions/mylisting.html", {
+        "listings":list(zip(listings, lst))
+    })
+
+@login_required
+def mybid(request):
+    mybids = Bid.objects.filter(user_id=request.user)
+    biddedunique = set()
+    for bid in mybids:
+        if bid.listing_id not in biddedunique:
+            biddedunique.add(bid.listing_id.pk)
+    
+    biddedlistings = Listing.objects.filter(pk__in = biddedunique)
+    print(biddedlistings)
+    lst = list()
+    for listing in biddedlistings:
+        print(listing)
+        latest = Bid.objects.filter(listing_id=listing.id, user_id=request.user).latest('datebidded')
+        print(latest)
+        if latest.bidamount == listing.currentbid:
+            if listing.isitactive == True:
+                lst.append(["Your bid is the highest bid", "success"])
+            else:
+                lst.append(['You won this auction!', 'success'])
+        else:
+            if listing.isitactive == True:
+                lst.append(["Your bid is no longer the highest bid, please bid again", "danger"])
+            else:
+                lst.append(['You lost this auction', 'danger'])
+    return render(request, "auctions/mybid.html", {
+        "listings": list(zip(biddedlistings,lst))
+    })
+
+@login_required
 def addtowatch(request, listing_id):
 
     listing = Listing.objects.get(pk=listing_id) 
@@ -113,9 +163,9 @@ def listing(request, listing_id):
         flag = 'You did not bid on this item'
         for bid in user_bid_this_listing:
             if bid.bidamount == listing.currentbid:
-                flag = "You won this auction"
+                flag = "Listing closed. You won this auction!"
             else:
-                flag = "You did not win this auction"
+                flag = "Listing closed. You did not win this auction"
 
         if listing in request.user.this_user_fav_listing.all():
             value = 'Remove from'
@@ -196,9 +246,11 @@ def categorylisting(request, category_id):
     
     category = Category.objects.get(pk = category_id)
     categorylisting = category.this_category_listings.all()
+    categorytitle = category.category_types
 
     return render(request, "auctions/categorylisting.html", {
-        "categorylisting":categorylisting
+        "listings":categorylisting,
+        "categorytitle":categorytitle
     })
 
 def nocategory(request):
@@ -206,5 +258,5 @@ def nocategory(request):
     nocategory = Listing.objects.filter(category_id__isnull = True)
 
     return render(request, "auctions/nocategory.html", {
-        "nocategory": nocategory
+        "listings": nocategory
     })

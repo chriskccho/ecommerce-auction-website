@@ -1,0 +1,27 @@
+{% extends "auctions/index.html" %}
+
+    
+    {% block heading %}
+    <h2>My Bids</h2>
+    {% endblock %}
+
+    {% block content %}
+        {% for listing, status in listings %}
+        <a class="link" href="{% url 'listing' listing.id %}">
+            <div class="listing">
+                <div class="image-container">
+                    <img class="listing-image" src="{{listing.image.url}}">
+                </div>
+                <div class="listing-info">
+                    <h4>{{listing.title}}</h4>
+                    <p>{{listing.description}}</p>
+                    <p>Starting Bid: ${{listing.get_starting_bid}}</p>
+                    <p>Current Price: {{listing.get_current_price}}</p>
+                    <p>Date Posted: {{listing.get_date}}</p>
+                    <p>Listed by: {{listing.user_id.username}}</p>
+                    <div class="alert alert-{{status.1}}">{{status.0}}</div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    {% endblock %}

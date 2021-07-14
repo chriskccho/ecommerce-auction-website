@@ -36,6 +36,14 @@
                 <li>
                     <a class="nav-link" href="{% url 'watchlist' %}">My Watchlist</a>
                 </li>
+                <!--My listing-->
+                <li>
+                    <a class="nav-link" href="{% url 'mylisting' %}">My Listings</a>
+                </li>
+                <!--My bid-->
+                <li>
+                    <a class="nav-link" href="{% url 'mybid' %}">My Bids</a>
+                </li>
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'login' %}">Log In</a>

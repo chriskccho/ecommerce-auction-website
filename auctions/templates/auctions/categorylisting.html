@@ -1,11 +1,5 @@
-{% extends "auctions/layout.html" %}
+{% extends "auctions/index.html" %}
 
-{% block body %}
-    {% if categorylisting %}
-        {% for listing in categorylisting %}
-            {{listing}}
-        {% endfor %}
-    {% else %}
-    <h3>No listings</h3>
-    {% endif %}
+{% block heading %}
+<h2>{{categorytitle}}</h2>
 {% endblock %}
