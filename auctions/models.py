@@ -19,7 +19,7 @@ class Listing(models.Model):
     startingbid = models.FloatField()
     currentbid = models.FloatField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="this_category_listings", blank=True, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, default='default.jpg')
     isitactive = models.BooleanField(default=True)
     watchlist = models.ManyToManyField(User, blank=True, related_name="this_user_fav_listing")
     dateposted = models.DateTimeField(auto_now_add=True)

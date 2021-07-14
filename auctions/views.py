@@ -76,6 +76,7 @@ def createlisting(request):
             listing = form.save(commit=False)
             listing.user_id = request.user
             listing.save()
+            return HttpResponseRedirect(reverse("listing", kwargs={"listing_id":listing.id}))
     return render(request, "auctions/createlisting.html", {
         "form":form
     })
@@ -180,7 +181,7 @@ def listing(request, listing_id):
 
     return render(request, "auctions/listing.html", context)
     
-
+@login_required
 def bid(request, listing_id):
 
     listing = Listing.objects.get(pk = listing_id)
@@ -207,7 +208,7 @@ def bid(request, listing_id):
 
     return HttpResponseRedirect(reverse('listing', kwargs={"listing_id":listing_id}) + '#bidform')
 
-
+@login_required
 def comment(request, listing_id):
 
     listing = Listing.objects.get(pk = listing_id)

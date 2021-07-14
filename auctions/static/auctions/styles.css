@@ -21,12 +21,12 @@ body {
 .image-container {
     width: 40%;
     text-align: center;
+    vertical-align: middle;
 }
 
 .listing-image {
     max-width:100%;
     max-height:100%;
-   
 }
 
 .link {
@@ -39,6 +39,9 @@ body {
     color: black;
 }
 
+.listing-info {
+    padding-left: 10px;
+}
 /*end active listing page */
 /*specfic listing page */
 
